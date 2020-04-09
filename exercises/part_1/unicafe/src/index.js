@@ -9,6 +9,22 @@ const Button = ({ label, handleClick }) => (
 
 const Statistic = ({ category, number }) => <p>{category + ": " + number}</p>;
 
+const Statistics = ({ catArr, numArr }) => {
+    let sum = numArr.reduce((a, b) => a + b);
+
+    if (sum === 0) {
+        return <div>No Feedback given.</div>;
+    }
+
+    let statistics = [];
+
+    for (let i = 0; i < catArr.length; i++) {
+        statistics.push(<Statistic category={catArr[i]} number={numArr[i]} />);
+    }
+
+    return <div>{statistics} </div>;
+};
+
 const App = () => {
     const [good, setGood] = useState(0);
     const [neutral, setNeutral] = useState(0);
@@ -28,11 +44,10 @@ const App = () => {
             <Button label="neutral" handleClick={incrementNeutral} />
             <Button label="bad" handleClick={incrementBad} />
             <Header text="Statistics" />
-            <Statistic category="Good" number={good} />
-            <Statistic category="Neutral" number={neutral} />
-            <Statistic category="Bad" number={bad} />
-            <Statistic category="Total" number={total} />
-            <Statistic category="Average Rating" number={average} />
+            <Statistics
+                catArr={["Good", "Neutral", "Bad", "Total", "Average Rating"]}
+                numArr={[good, neutral, bad, total, average]}
+            />
         </div>
     );
 };
