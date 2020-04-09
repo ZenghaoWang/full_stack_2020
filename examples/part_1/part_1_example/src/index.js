@@ -18,12 +18,6 @@ const Hello = ({ name, age }) => {
     );
 };
 
-const Display = ({ counter }) => <div>This is a counter. {counter}</div>;
-
-const Button = ({ handleCLick, text }) => {
-    return <button onClick={handleCLick}>{text}</button>;
-};
-
 const Footer = () => {
     return (
         <div>
@@ -31,6 +25,14 @@ const Footer = () => {
             <a href="https://github.com/ZenghaoWang">Zenghao Wang</a>
         </div>
     );
+};
+
+const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>;
+
+const History = ({ allCLicks }) => {
+    if (allCLicks.length === 0) {
+        return <div>The app is used by pressing the buttons.</div>;
+    } else return <div>Button press history: {allCLicks.join(" ")}</div>;
 };
 
 // Defines a react component
@@ -41,10 +43,19 @@ const App = () => {
     const name = "Peter";
     const age = 10;
 
-    const [counter, setCounter] = useState(0);
-    const increaseByOne = () => setCounter(counter + 1);
-    const decreaseByOne = () => setCounter(counter - 1);
-    const setToZero = () => setCounter(0);
+    const [left, setLeft] = useState(0);
+    const [right, setRight] = useState(0);
+    const [allCLicks, setAll] = useState([]);
+
+    const handleLeftClick = () => {
+        setAll(allCLicks.concat("L"));
+        setLeft(left + 1);
+    };
+
+    const handleRightClick = () => {
+        setAll(allCLicks.concat("R"));
+        setRight(right + 1);
+    };
 
     // setTimeout(() => setCounter(counter + 1), 1000);
     return (
@@ -52,10 +63,11 @@ const App = () => {
             <h1>Greetings</h1>
             <Hello name="Maya" age={26 + 10}></Hello>
             <Hello name={name} age={age}></Hello>
-            <Display counter={counter}></Display>
-            <Button handleCLick={increaseByOne} text="Plus" />
-            <Button handleCLick={setToZero} text="Zero" />
-            <Button handleCLick={decreaseByOne} text="Minus" />
+            {left}
+            <Button onClick={handleLeftClick} text="left" />
+            <Button onClick={handleRightClick} text="right" />
+            {right}
+            <History allCLicks={allCLicks}></History>
             <Footer></Footer>
         </>
     );
