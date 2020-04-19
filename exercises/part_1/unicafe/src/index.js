@@ -7,7 +7,7 @@ const Button = ({ label, handleClick }) => (
     <button onClick={handleClick}>{label}</button>
 );
 
-const Statistic = ({ category, number }) => <p>{category + ": " + number}</p>;
+const Statistic = ({ category, number }) => <td>{`${category}: ${number}`}</td>;
 
 const Statistics = ({ catArr, numArr }) => {
     let sum = numArr.reduce((a, b) => a + b);
@@ -19,10 +19,20 @@ const Statistics = ({ catArr, numArr }) => {
     let statistics = [];
 
     for (let i = 0; i < catArr.length; i++) {
-        statistics.push(<Statistic category={catArr[i]} number={numArr[i]} />);
+        statistics.push(
+            <tr key={i}>
+                <Statistic category={catArr[i]} number={numArr[i]} />
+            </tr>
+        );
     }
 
-    return <div>{statistics} </div>;
+    return (
+        <div>
+            <table>
+                <tbody>{statistics}</tbody>
+            </table>
+        </div>
+    );
 };
 
 const App = () => {
