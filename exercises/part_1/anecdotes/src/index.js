@@ -12,6 +12,8 @@ const App = ({ anecdotes }) => {
     // Initializes an array of 0s
     const [voteCount, setVoteCount] = useState(Array(anecdotes.length).fill(0));
 
+    const [mostVotes, setMostVotes] = useState(0);
+
     function getRndInteger(min, max) {
         return Math.floor(Math.random() * (max - min)) + min;
     }
@@ -20,16 +22,24 @@ const App = ({ anecdotes }) => {
         let copy = [...voteCount];
         copy[selected] += 1;
         setVoteCount(copy);
+
+        if (copy[selected] >= copy[mostVotes]) {
+            setMostVotes(selected);
+        }
     };
 
     const selectRandom = () => setSelected(getRndInteger(0, anecdotes.length));
 
     return (
         <div>
+            <h1>Anecdote of the Day</h1>
             <p>{anecdotes[selected]}</p>
             <Votes num={voteCount[selected]}></Votes>
             <Button label="Vote" onClick={incrementVotes}></Button>
             <Button label="Next Anecdote" onClick={selectRandom}></Button>
+            <h1>Most Popular Anecdote</h1>
+            <p>{anecdotes[mostVotes]}</p>
+            <Votes num={voteCount[mostVotes]}></Votes>
         </div>
     );
 };
