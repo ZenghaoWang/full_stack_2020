@@ -4,18 +4,31 @@ import ReactDOM from "react-dom";
 const Button = ({ label, onClick }) => (
     <button onClick={onClick}>{label}</button>
 );
-const App = (props) => {
+
+const Votes = ({ num }) => <p>{`Votes: ${num}`}</p>;
+const App = ({ anecdotes }) => {
     const [selected, setSelected] = useState(0);
+
+    // Initializes an array of 0s
+    const [voteCount, setVoteCount] = useState(Array(anecdotes.length).fill(0));
 
     function getRndInteger(min, max) {
         return Math.floor(Math.random() * (max - min)) + min;
     }
 
+    const incrementVotes = () => {
+        let copy = [...voteCount];
+        copy[selected] += 1;
+        setVoteCount(copy);
+    };
+
     const selectRandom = () => setSelected(getRndInteger(0, anecdotes.length));
 
     return (
         <div>
-            <p>{props.anecdotes[selected]}</p>
+            <p>{anecdotes[selected]}</p>
+            <Votes num={voteCount[selected]}></Votes>
+            <Button label="Vote" onClick={incrementVotes}></Button>
             <Button label="Next Anecdote" onClick={selectRandom}></Button>
         </div>
     );
