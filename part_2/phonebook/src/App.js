@@ -11,8 +11,9 @@ const App = () => {
 
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+  const [newFilter, setNewFilter] = useState("");
 
-  const addName = (event) => {
+  const addPerson = (event) => {
     event.preventDefault();
 
     if (persons.map((person) => person.name).includes(newName)) {
@@ -32,16 +33,23 @@ const App = () => {
   };
 
   // Updates everytime the user types a character
-  const handleNameChange = (event) => {
-    setNewName(event.target.value);
-  };
-
+  const handleNameChange = (event) => setNewName(event.target.value);
   const handleNumberChange = (event) => setNewNumber(event.target.value);
+  const handleFilterChange = (event) => setNewFilter(event.target.value);
+
+  const peopleToShow = persons.filter((person) =>
+    person.name.includes(newFilter)
+  );
 
   return (
     <div>
-      <h2>Phonebook</h2>
-      <form onSubmit={addName}>
+      <h1>Phonebook</h1>
+      <div>
+        filter by name:{" "}
+        <input value={newFilter} onChange={handleFilterChange} />
+      </div>
+      <h2>Add a New Entry</h2>
+      <form onSubmit={addPerson}>
         <div>
           name: <input value={newName} onChange={handleNameChange} />
         </div>
@@ -54,7 +62,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <ul>
-        {persons.map((person) => (
+        {peopleToShow.map((person) => (
           <Person key={person.name} person={person}></Person>
         ))}
       </ul>
