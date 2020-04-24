@@ -1,36 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import People from "./components/People";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-123456" },
-    { name: "Ada Lovelace", number: "39-44-5323523" },
-    { name: "Dan Abramov", number: "12-43-234345" },
-    { name: "Mary Poppendieck", number: "39-23-6423122" },
-  ]);
+  const [persons, setPersons] = useState([]);
 
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [newFilter, setNewFilter] = useState("");
 
+  // When rendering for the first time, resolve promise from server and set state of phonebook
+  useEffect(() => {
+    axios.get("http://localhost:3001/persons").then((response) => {
+      setPersons(response.data);
+    });
+  }, []);
+
+  // Event handler for clicking submit
   const addPerson = (event) => {
     event.preventDefault();
 
+    // Don't allow duplicates
     if (persons.map((person) => person.name).includes(newName)) {
       alert(`${newName} already exists in the phonebook.`);
       return;
     }
 
+    // Create new person
     const personObject = {
       name: newName,
       number: newNumber,
     };
 
+    // Add person to phonebook
     setPersons(persons.concat(personObject));
-    console.log(persons);
-
     setNewName("");
   };
 
