@@ -8,6 +8,11 @@ const App = () => {
   const addName = (event) => {
     event.preventDefault();
 
+    if (persons.map((person) => person.name).includes(newName)) {
+      alert(`${newName} already exists in the phonebook.`);
+      return;
+    }
+
     const personObject = {
       name: newName,
     };
