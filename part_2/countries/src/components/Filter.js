@@ -2,7 +2,8 @@ import React from "react";
 
 const Filter = ({ value, onChange }) => (
   <div>
-    Filter countries by name: <input value={value} onChange={onChange} />
+    <b>Filter by Name of Country </b>
+    <input value={value} onChange={onChange} />
   </div>
 );
 

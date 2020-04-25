@@ -1,12 +1,49 @@
-import React from "react";
+import React, { useState } from "react";
 
-const CountryNamesList = ({ countriesList }) => (
-  <ul>
-    {countriesList.map((country) => (
-      <li key={country.name}>{country.name}</li>
-    ))}
-  </ul>
-);
+const Country = ({ country }) => {
+  const [expanded, setExpanded] = useState(false);
+
+  // If not expanded, just show name of country
+  // Has a button to expand
+  if (!expanded) {
+    return (
+      <li>
+        {country.name}
+        <button onClick={() => setExpanded(!expanded)}>
+          {expanded ? "hide" : "show"}
+        </button>
+      </li>
+    );
+  }
+
+  // Otherwise, show all details of country
+  else
+    return (
+      <li>
+        <h1>
+          {country.name}
+          <button onClick={() => setExpanded(!expanded)}>
+            {expanded ? "hide" : "show"}
+          </button>
+        </h1>
+
+        <p>
+          <b>Capital: </b>
+          {country.capital}
+        </p>
+
+        <p>
+          <b>Population: </b>
+          {country.population}
+        </p>
+
+        <h2>Languages</h2>
+        <LanguagesList country={country} />
+
+        <Flag country={country} />
+      </li>
+    );
+};
 
 const LanguagesList = ({ country }) => (
   <ul>
@@ -24,36 +61,11 @@ const Countries = ({ countriesList }) => {
   // Too many results
   if (countriesList.length > 10) {
     return <div>Too many potential matches</div>;
-  }
-
-  // Fewer than 10, more than 1
-  else if (countriesList.length > 1) {
-    return <CountryNamesList countriesList={countriesList} />;
-  }
-
-  // 1 or 0 results
-  else {
+  } else {
     return (
       <div>
         {countriesList.map((country) => (
-          <div key={country.name}>
-            <h1>{country.name}</h1>
-
-            <p>
-              <b>Capital: </b>
-              {country.capital}
-            </p>
-
-            <p>
-              <b>Population: </b>
-              {country.population}
-            </p>
-
-            <h2>Languages</h2>
-            <LanguagesList country={country} />
-
-            <Flag country={country} />
-          </div>
+          <Country key={country.name} country={country} />
         ))}
       </div>
     );
