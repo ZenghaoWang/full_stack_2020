@@ -14,15 +14,7 @@ const Flag = ({ country }) => (
 );
 
 const Weather = ({ country }) => {
-  const [weather, setWeather] = useState({
-    location: { name: "" },
-    current: {
-      temperature: "",
-      weather_icons: "",
-      wind_speed: "",
-      wind_dir: "",
-    },
-  });
+  const [weather, setWeather] = useState({});
 
   useEffect(() => {
     axios
@@ -30,13 +22,13 @@ const Weather = ({ country }) => {
         `http://api.weatherstack.com/current?access_key=${process.env.REACT_APP_API_KEY}&query=${country.capital}`
       )
       .then((response) => {
-        console.log("response");
-
         setWeather(response.data);
       });
   }, [country.capital]);
 
-  return (
+  return Object.keys(weather).length === 0 ? (
+    <div>Fetching weather data..</div>
+  ) : (
     <div>
       <h2>{`Weather in ${weather.location.name}`}</h2>
 
