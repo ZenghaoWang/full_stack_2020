@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const LanguagesList = ({ country }) => (
   <ul>
@@ -12,26 +13,70 @@ const Flag = ({ country }) => (
   <img src={country.flag} alt={`The flag of ${country.name}`} />
 );
 
-const ExpandedCountry = ({ country }) => (
-  <li>
-    <h1>{country.name}</h1>
+const Weather = ({ country }) => {
+  const [weather, setWeather] = useState({
+    location: { name: "" },
+    current: {
+      temperature: "",
+      weather_icons: "",
+      wind_speed: "",
+      wind_dir: "",
+    },
+  });
 
-    <p>
-      <b>Capital: </b>
-      {country.capital}
-    </p>
+  useEffect(() => {
+    axios
+      .get(
+        `http://api.weatherstack.com/current?access_key=${process.env.REACT_APP_API_KEY}&query=${country.capital}`
+      )
+      .then((response) => {
+        console.log("response");
 
-    <p>
-      <b>Population: </b>
-      {country.population}
-    </p>
+        setWeather(response.data);
+      });
+  }, [country.capital]);
 
-    <h2>Languages</h2>
-    <LanguagesList country={country} />
+  return (
+    <div>
+      <h2>{`Weather in ${weather.location.name}`}</h2>
 
-    <Flag country={country} />
-  </li>
-);
+      <p>
+        <b>Temperature: </b>
+        {`${weather.current.temperature} degrees celsius`}
+      </p>
+
+      <img
+        src={weather.current.weather_icons[0]}
+        alt={`Weather icon for ${weather.location.name}`}
+      />
+
+      <p>
+        <b>Wind: </b>
+        {`${weather.current.wind_speed} km/h ${weather.current.wind_dir}`}
+      </p>
+    </div>
+  );
+};
+
+const ExpandedCountry = ({ country }) => {
+  return (
+    <li>
+      <h1>{country.name}</h1>
+      <p>
+        <b>Capital: </b>
+        {country.capital}
+      </p>
+      <p>
+        <b>Population: </b>
+        {country.population}
+      </p>
+      <h2>Languages</h2>
+      <LanguagesList country={country} />
+      <Flag country={country} />
+      <Weather country={country} />
+    </li>
+  );
+};
 
 const Country = ({ country, hideButton }) => {
   const [expanded, setExpanded] = useState(false);
