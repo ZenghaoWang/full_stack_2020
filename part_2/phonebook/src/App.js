@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import People from "./components/People";
 import Filter from "./components/Filter";
-import PersonForm from "./components/PersonForm";
+import Form from "./components/Form";
+import peopleService from "./services/people";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -13,7 +13,7 @@ const App = () => {
 
   // When rendering for the first time, resolve promise from server and set state of phonebook
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
+    peopleService.getAll().then((response) => {
       setPersons(response.data);
     });
   }, []);
@@ -35,12 +35,10 @@ const App = () => {
     };
 
     // Add person to phonebook
-    axios
-      .post("http://localhost:3001/persons", personObject)
-      .then((response) => {
-        setPersons(persons.concat(response.data));
-        setNewName("");
-      });
+    peopleService.create(personObject).then((response) => {
+      setPersons(persons.concat(response.data));
+      setNewName("");
+    });
   };
 
   // Updates everytime the user types a character
@@ -59,13 +57,13 @@ const App = () => {
       <Filter value={newFilter} onChange={handleFilterChange}></Filter>
 
       <h2>Add a New Entry</h2>
-      <PersonForm
+      <Form
         onSubmit={addPerson}
         nameValue={newName}
         onNameChange={handleNameChange}
         numValue={newNumber}
         onNumChange={handleNumberChange}
-      ></PersonForm>
+      ></Form>
 
       <h2>Numbers</h2>
       <People peopleArr={peopleToShow}></People>
