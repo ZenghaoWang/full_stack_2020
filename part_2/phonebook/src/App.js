@@ -22,24 +22,43 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault();
 
-    // Don't allow duplicates
+    // If duplicate name, offer to change phone number
     if (persons.map((person) => person.name).includes(newName)) {
-      alert(`${newName} already exists in the phonebook.`);
-      return;
+      if (
+        window.confirm(
+          `${newName} already exists in the phonebook; replace the old number?`
+        )
+      ) {
+        // Replace phone number
+        const person = persons.find((p) => p.name === newName);
+        const changedPerson = { ...person, number: newNumber };
+
+        peopleService
+          .update(person.id, changedPerson)
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((p) => (p.id !== person.id ? p : returnedPerson))
+            );
+          });
+      }
     }
 
-    // Create new person
-    const personObject = {
-      name: newName,
-      number: newNumber,
-    };
+    // otherwise, create new person as normal
+    else {
+      // Create new person
+      const personObject = {
+        name: newName,
+        number: newNumber,
+      };
 
-    // Add person to phonebook
-    peopleService.create(personObject).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson));
-      setNewName("");
-      setNewNumber("");
-    });
+      // Add person to phonebook
+      peopleService.create(personObject).then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+      });
+    }
+
+    setNewName("");
+    setNewNumber("");
   };
 
   const deletePerson = (person) => {
