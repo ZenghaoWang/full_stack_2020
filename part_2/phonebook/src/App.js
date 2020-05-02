@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import People from "./components/People";
+import Person from "./components/Person";
 import Filter from "./components/Filter";
 import Form from "./components/Form";
 import peopleService from "./services/people";
@@ -13,8 +13,8 @@ const App = () => {
 
   // When rendering for the first time, resolve promise from server and set state of phonebook
   useEffect(() => {
-    peopleService.getAll().then((response) => {
-      setPersons(response.data);
+    peopleService.getAll().then((initial) => {
+      setPersons(initial);
     });
   }, []);
 
@@ -35,9 +35,19 @@ const App = () => {
     };
 
     // Add person to phonebook
-    peopleService.create(personObject).then((response) => {
-      setPersons(persons.concat(response.data));
+    peopleService.create(personObject).then((returnedPerson) => {
+      setPersons(persons.concat(returnedPerson));
       setNewName("");
+      setNewNumber("");
+    });
+  };
+
+  const deletePerson = (person) => {
+    if (!window.confirm(`Delete ${person.name}?`)) {
+      return;
+    }
+    peopleService.deletePerson(person.id).then((response) => {
+      setPersons(persons.filter((p) => p.id !== person.id));
     });
   };
 
@@ -66,7 +76,15 @@ const App = () => {
       ></Form>
 
       <h2>Numbers</h2>
-      <People peopleArr={peopleToShow}></People>
+      <ul>
+        {peopleToShow.map((person) => (
+          <Person
+            key={person.name}
+            person={person}
+            onDelete={() => deletePerson(person)}
+          ></Person>
+        ))}
+      </ul>
     </div>
   );
 };

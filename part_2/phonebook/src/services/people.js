@@ -2,19 +2,19 @@ import axios from "axios";
 const dbUrl = "http://localhost:3001/persons";
 
 const getAll = () => {
-  return axios.get(dbUrl);
+  return axios.get(dbUrl).then((response) => response.data);
 };
 
 const create = (newObject) => {
-  return axios.post(dbUrl, newObject);
+  return axios.post(dbUrl, newObject).then((response) => response.data);
 };
 
-const update = (id, newObject) => {
-  return axios.put(`${dbUrl}/${id}`, newObject);
+const deletePerson = (id) => {
+  return axios.delete(`${dbUrl}/${id}`).then((response) => response.data);
 };
 
 export default {
   getAll,
   create,
-  update,
+  deletePerson,
 };
