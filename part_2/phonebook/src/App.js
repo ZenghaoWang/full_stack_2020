@@ -3,9 +3,12 @@ import Person from "./components/Person";
 import Filter from "./components/Filter";
 import Form from "./components/Form";
 import peopleService from "./services/people";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
+  const [notificationMessage, setNotificationMessage] = useState(null);
+  const [warningMessage, setWarningMessage] = useState(null);
 
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
@@ -17,6 +20,42 @@ const App = () => {
       setPersons(initial);
     });
   }, []);
+
+  // Show a notification at the top of the screen for numSeconds
+  const showNotification = (msg, numSeconds) => {
+    setNotificationMessage(msg);
+    setTimeout(() => {
+      setNotificationMessage(null);
+    }, numSeconds);
+  };
+
+  const showWarning = (msg, numSeconds) => {
+    setWarningMessage(msg);
+    setTimeout(() => {
+      setWarningMessage(null);
+    }, numSeconds);
+  };
+
+  const replacePerson = (person, changedPerson) => {
+    peopleService
+      .update(person.id, changedPerson)
+      .then((returnedPerson) => {
+        setPersons(
+          persons.map((p) => (p.id !== person.id ? p : returnedPerson))
+        );
+        showNotification(
+          `Successfully changed phone number for ${newName}.`,
+          5000
+        );
+      })
+      .catch((error) => {
+        showWarning(
+          `The entry for ${person.name} was already deleted from the server.`,
+          5000
+        );
+        setPersons(persons.filter((p) => p.id !== person.id));
+      });
+  };
 
   // Event handler for clicking submit
   const addPerson = (event) => {
@@ -32,14 +71,7 @@ const App = () => {
         // Replace phone number
         const person = persons.find((p) => p.name === newName);
         const changedPerson = { ...person, number: newNumber };
-
-        peopleService
-          .update(person.id, changedPerson)
-          .then((returnedPerson) => {
-            setPersons(
-              persons.map((p) => (p.id !== person.id ? p : returnedPerson))
-            );
-          });
+        replacePerson(person, changedPerson);
       }
     }
 
@@ -55,8 +87,8 @@ const App = () => {
       peopleService.create(personObject).then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson));
       });
+      showNotification(`${newName} was added to the phonebook.`, 5000);
     }
-
     setNewName("");
     setNewNumber("");
   };
@@ -83,6 +115,8 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={notificationMessage} isWarning={false} />
+      <Notification message={warningMessage} isWarning={true} />
       <Filter value={newFilter} onChange={handleFilterChange}></Filter>
 
       <h2>Add a New Entry</h2>
